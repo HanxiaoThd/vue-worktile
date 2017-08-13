@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <script src="vue.min.js"></script>
+    <style>
+        *{
+            margin:0;
+            padding:0;
+        }
+        .celandar{
+            width: 1000px;
+            height:530px;
+            /*border:1px solid #333 ;*/
+            margin:0 auto;
+        }
+        table{
+            width:100%;
+            border-collapse: collapse;
+        }
+        table.bgtable thead tr th{
+            height:30px;
+        }
+        table.bgtable tbody tr td {
+            height:100px;
+            border: 1px solid #ccc;
+            -webkit-box-sizing: border-box;
+            -moz-box-sizing: border-box;
+            box-sizing: border-box;
+            text-align: right;
+            vertical-align: top;
+            padding:6px;
+        }
+
+    </style>
+</head>
+<body>
+<div class="celandar" id="app">
+    <div class="tableBox1">
+        <table class="bgtable">
+            <thead>
+            <tr>
+                <th v-for="(day,index) in week">{{day}}</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr v-for="week in theWeek()">
+                <td v-for="(day,index) in week" v-bind:class="">{{day["day"]}}</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+</body>
+<script>
+    new Vue({
+        el:"#app",
+        data:{
+            week:["周日","周一","周二","周三","周四","周五","周六"],
+            //月份第一天的星期，上一个月的最后一天的日期，这个月的总天数，
+           dayArr:[],
+            year:2017,
+            month:8
+        },
+        mounted:function () {
+            //这个月的第一天是星期几
+            var monthDay=new Date(this.year,this.month-1,1).getDay();
+            //知道这个月共有多少天
+            var y=this.month==12?this.year+1:this.year;
+            var m=this.month==12?1:this.month;
+            var dayAmount=new Date((new Date(y,m,1)-1)).getDate();
+            //可以通过计算下一个月的前一毫秒的日期来计算这个月的总天数
+
+            //计算上一个月的最后一天是几号;
+            var prevMonthLastDay=new Date(new Date(this.year,this.month-1,1)-1).getDate();
+            //如果这个月第一天是星期一则需要放入一个上一个月的尾巴
+            while(monthDay-- >0){
+//                this.dayArr.unshift(prevMonthLastDay--);
+                //此时数据格式是一维数组[1,2,3,4,5]不携带任何的数据信息
+
+                this.dayArr.unshift({"day":prevMonthLastDay--,"prevMonth":true});
+            }
+            //放置本月的日期
+            var cont=0;
+            while (dayAmount-- >0){
+//                this.dayArr.push(++cont);
+                //此时数据格式是一维数组[1,2,3,4,5]不携带任何的数据信息
+
+                this.dayArr.push({"day":++cont});
+            }
+            //不足35
+            var cont2=0;
+            while(this.dayArr.length!=35){
+//                this.dayArr.push(++cont2);
+                //此时数据格式是一维数组[1,2,3,4,5]不携带任何的数据信息
+                this.dayArr.push({"day":++cont2,"nextMonth":true})
+            }
+            console.log(this.dayArr);
+
+        },
+        methods:{
+            theWeek:function () {
+                var _arr=[];
+                for(var i=0;i<5;i++) {
+                    var _week=[];
+                    for(var j=0;j<7;j++){
+                        _week.push(this.dayArr[i*7+j]);
+                    }
+                    _arr.push(_week);
+                }
+                return _arr;
+            }
+        }
+    })
+
+</script>
+</html>
